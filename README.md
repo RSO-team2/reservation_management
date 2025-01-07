@@ -4,7 +4,7 @@
 
 [Postman API Documentation](https://documenter.getpostman.com/view/26454602/2sAYBbd8zB)
 
-The API serves as the dedicated microservice for interaction with users database. For more information regarding the users database, please refer to the following repository: [Database Setup](https://github.com/RSO-team2/database_setup)
+The API serves as the dedicated microservice for interaction with reservation database. For more information regarding the reservation database, please refer to the following repository: [Database Setup](https://github.com/RSO-team2/database_setup)
 
 ### Use-Cases
 
