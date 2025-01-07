@@ -6,7 +6,6 @@ from nats.aio.client import Client as NATS
 from dotenv import load_dotenv
 from flask import Flask, request, jsonify
 
-
 MAKE_RESERVATION ="INSERT INTO reservations (customer_id,restaurant_id, make_date, reservation_date, num_persons, optional_message) VALUES (%s,%s,%s,%s,%s,%s) RETURNING id"
 GET_RESERVATION_BY_USER = "select * from reservations where customer_id = %s"
 GET_RESERVATION_BY_RESTAURANT = "select * from reservations where restaurant_id = %s"
