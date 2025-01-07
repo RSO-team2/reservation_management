@@ -2,4 +2,4 @@ flask
 psycopg2-binary
 python-dotenv
 bcrypt
-nats
+nats-py
