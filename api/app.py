@@ -1,8 +1,6 @@
 import os
 import psycopg2
 import bcrypt
-import asyncio
-from nats.aio.client import Client as NATS
 from dotenv import load_dotenv
 from flask import Flask, request, jsonify
 
@@ -13,12 +11,6 @@ GET_RESERVATION_BY_RESTAURANT = "select * from reservations where restaurant_id 
 load_dotenv()
 
 app = Flask(__name__)
-
-async def publish_event(subject, message):
-    nc = NATS()
-    await nc.connect(servers=[" nats://nats.default.svc.cluster.local:4222"])
-    await nc.publish(subject, message.encode('utf-8'))
-    await nc.close()
 
 
 @app.post("/make_reservation")
@@ -36,15 +28,6 @@ def make_reservation():
         with connection.cursor() as cursor:
             cursor.execute(MAKE_RESERVATION, (customer_id,restaurant_id, make_date, reservation_date, num_persons, optional_message))
             reservation_id = cursor.fetchone()[0]
-
-    # Publish event to NATS
-    event = {
-        "reservation_id": reservation_id,
-        "customer_id": customer_id,
-        "restaurant_id": restaurant_id,
-        "reservation_date": reservation_date
-    }
-    asyncio.run(publish_event("reservation.created", jsonify(event).get_data(as_text=True)))
     
     return {"reservation_id": reservation_id, "Message": f"Reservation {reservation_id} created."}, 201
 
@@ -109,4 +92,4 @@ def get_reservations_by_restaurant():
 
 if __name__ == "__main__":
     print("Starting app...")
-    app.run(host="0.0.0.0", port=5002)
+    app.run(host="0.0.0.0", port=5001)
