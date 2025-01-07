@@ -2,5 +2,4 @@ flask
 psycopg2-binary
 python-dotenv
 bcrypt
-asyncio
 nats
