@@ -23,7 +23,7 @@ spec:
         - image: <IMAGE>
           name: fun-food-times-reservation-management
           ports:
-            - containerPort: 5001
+            - containerPort: 5002
           env:
             - name: DATABASE_URL
               valueFrom:
@@ -35,13 +35,13 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: fun-food-times-reservation-management-service
+  name: fun-food-times-lm
 spec:
   type: LoadBalancer
   ports:
     - name: http
-      port: 5001
+      port: 5002
       protocol: TCP
-      targetPort: 5001
+      targetPort: 5002
   selector:
     app: fun-food-times-reservation-management
