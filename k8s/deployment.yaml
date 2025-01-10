@@ -35,7 +35,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: fun-food-times-lm
+  name: fun-food-times-lm4
 spec:
   type: LoadBalancer
   ports:
