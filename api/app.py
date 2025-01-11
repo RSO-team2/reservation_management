@@ -49,8 +49,7 @@ def make_reservation():
                 "reservation_id": reservation_id,
                 "Message": f"Reservation {reservation_id} created.",
             }
-        ),
-        201,
+        )
     )
 
 
@@ -66,7 +65,7 @@ def get_reservations_by_user():
             reservations = cursor.fetchall()
 
     if not reservations:
-        return jsonify({"error": "No reservations found"}), 404
+        return jsonify({"error": "No reservations found"})
 
     else:
         reservations_list = [
@@ -80,7 +79,7 @@ def get_reservations_by_user():
             for row in reservations
         ]
 
-    return jsonify({"reservations": reservations_list}), 200
+    return jsonify({"reservations": reservations_list})
 
 
 @app.get("/get_reservations_by_restaurant")
@@ -96,7 +95,7 @@ def get_reservations_by_restaurant():
             reservations = cursor.fetchall()
 
     if not reservations:
-        return jsonify({"error": "No reservations found"}), 404
+        return jsonify({"error": "No reservations found"})
 
     else:
         reservations_list = [
@@ -110,7 +109,7 @@ def get_reservations_by_restaurant():
             for row in reservations
         ]
 
-    return jsonify({"reservations": reservations_list}), 200
+    return jsonify({"reservations": reservations_list})
 
 
 if __name__ == "__main__":
