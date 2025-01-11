@@ -1,19 +1,23 @@
 import os
-import psycopg2
-import bcrypt
-from dotenv import load_dotenv
-from flask import Flask, request, jsonify
 
-MAKE_RESERVATION ="INSERT INTO reservations (customer_id,restaurant_id, make_date, reservation_date, num_persons, optional_message) VALUES (%s,%s,%s,%s,%s,%s) RETURNING id"
+import bcrypt
+import psycopg2
+from dotenv import load_dotenv
+from flask import Flask, jsonify, request
+from flask_cors import CORS, cross_origin
+
+MAKE_RESERVATION = "INSERT INTO reservations (customer_id,restaurant_id, make_date, reservation_date, num_persons, optional_message) VALUES (%s,%s,%s,%s,%s,%s) RETURNING id"
 GET_RESERVATION_BY_USER = "select * from reservations where customer_id = %s"
 GET_RESERVATION_BY_RESTAURANT = "select * from reservations where restaurant_id = %s"
 
 load_dotenv()
 
 app = Flask(__name__)
+cors = CORS(app)
 
 
 @app.post("/make_reservation")
+@cross_origin()
 def make_reservation():
     data = request.get_json()
     customer_id = data["customer_id"]
@@ -26,15 +30,29 @@ def make_reservation():
     connection = psycopg2.connect(os.getenv("DATABASE_URL"))
     with connection:
         with connection.cursor() as cursor:
-            cursor.execute(MAKE_RESERVATION, (customer_id,restaurant_id, make_date, reservation_date, num_persons, optional_message))
+            cursor.execute(
+                MAKE_RESERVATION,
+                (
+                    customer_id,
+                    restaurant_id,
+                    make_date,
+                    reservation_date,
+                    num_persons,
+                    optional_message,
+                ),
+            )
             reservation_id = cursor.fetchone()[0]
-    
-    return {"reservation_id": reservation_id, "Message": f"Reservation {reservation_id} created."}, 201
+
+    return {
+        "reservation_id": reservation_id,
+        "Message": f"Reservation {reservation_id} created.",
+    }, 201
+
 
 @app.get("/get_reservations_by_user")
+@cross_origin()
 def get_reservations_by_user():
-    data = request.get_json()
-    customer_id = data["customer_id"]
+    customer_id = request.args.get("customer_id")
 
     connection = psycopg2.connect(os.getenv("DATABASE_URL"))
     with connection:
@@ -42,28 +60,28 @@ def get_reservations_by_user():
             cursor.execute(GET_RESERVATION_BY_USER, (customer_id,))
             reservations = cursor.fetchall()
 
-    if not reservations: 
-        return jsonify({"error": "No reservations found"}), 404 
+    if not reservations:
+        return jsonify({"error": "No reservations found"}), 404
 
     else:
         reservations_list = [
-        {
-            "reservation_id": row[0],  
-            "restaurant_id": row[2],      
-            "reservation_date": row[4],   
-            "number_guests": row[5], 
-            "message": row[6]     
-        }
-        for row in reservations
-    ]
+            {
+                "reservation_id": row[0],
+                "restaurant_id": row[2],
+                "reservation_date": row[4],
+                "number_guests": row[5],
+                "message": row[6],
+            }
+            for row in reservations
+        ]
 
     return jsonify(reservations_list), 200
 
 
 @app.get("/get_reservations_by_restaurant")
+@cross_origin()
 def get_reservations_by_restaurant():
-    data = request.get_json()
-    restaurant_id = data["restaurant_id"]
+    restaurant_id = request.args.get("restaurant_id")
 
     connection = psycopg2.connect(os.getenv("DATABASE_URL"))
 
@@ -72,20 +90,20 @@ def get_reservations_by_restaurant():
             cursor.execute(GET_RESERVATION_BY_RESTAURANT, (restaurant_id,))
             reservations = cursor.fetchall()
 
-    if not reservations: 
-        return jsonify({"error": "No reservations found"}), 404 
+    if not reservations:
+        return jsonify({"error": "No reservations found"}), 404
 
     else:
         reservations_list = [
-        {
-            "reservation_id": row[0],  
-            "user_id": row[1],      
-            "reservation_date": row[4],   
-            "number_guests": row[5], 
-            "message": row[6]     
-        }
-        for row in reservations
-    ]
+            {
+                "reservation_id": row[0],
+                "user_id": row[1],
+                "reservation_date": row[4],
+                "number_guests": row[5],
+                "message": row[6],
+            }
+            for row in reservations
+        ]
 
     return jsonify(reservations_list), 200
 
