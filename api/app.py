@@ -5,6 +5,7 @@ import psycopg2
 from dotenv import load_dotenv
 from flask import Flask, jsonify, request
 from flask_cors import CORS, cross_origin
+from prometheus_flask_exporter import PrometheusMetrics
 
 MAKE_RESERVATION = "INSERT INTO reservations (customer_id,restaurant_id, make_date, reservation_date, num_persons, optional_message) VALUES (%s,%s,%s,%s,%s,%s) RETURNING id"
 GET_RESERVATION_BY_USER = "select * from reservations where customer_id = %s"
@@ -14,6 +15,12 @@ load_dotenv()
 
 app = Flask(__name__)
 cors = CORS(app)
+
+# Attach Prometheus metrics to the Flask app
+metrics = PrometheusMetrics(app)
+
+# Automatically collect standard metrics like request count, response duration, and more
+metrics.info('app_info', 'Restaurant Management API Info', version='1.0.0')
 
 def check_database_connection():
     try:
