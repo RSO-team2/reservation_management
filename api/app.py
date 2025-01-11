@@ -43,10 +43,15 @@ def make_reservation():
             )
             reservation_id = cursor.fetchone()[0]
 
-    return {
-        "reservation_id": reservation_id,
-        "Message": f"Reservation {reservation_id} created.",
-    }, 201
+    return (
+        jsonify(
+            {
+                "reservation_id": reservation_id,
+                "Message": f"Reservation {reservation_id} created.",
+            }
+        ),
+        201,
+    )
 
 
 @app.get("/get_reservations_by_user")
@@ -75,7 +80,7 @@ def get_reservations_by_user():
             for row in reservations
         ]
 
-    return jsonify(reservations_list), 200
+    return jsonify({"reservations": reservations_list}), 200
 
 
 @app.get("/get_reservations_by_restaurant")
@@ -105,7 +110,7 @@ def get_reservations_by_restaurant():
             for row in reservations
         ]
 
-    return jsonify(reservations_list), 200
+    return jsonify({"reservations": reservations_list}), 200
 
 
 if __name__ == "__main__":
