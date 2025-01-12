@@ -2,15 +2,15 @@
 
 ## Purpose and API Documentation
 
-[Postman API Documentation](https://documenter.getpostman.com/view/26454602/2sAYBbd8zB)
+[Postman API Documentation](https://documenter.getpostman.com/view/26454602/2sAYQWKZR6)
 
 The API serves as the dedicated microservice for interaction with reservation database. For more information regarding the reservation database, please refer to the following repository: [Database Setup](https://github.com/RSO-team2/database_setup)
 
 ### Use-Cases
 
 1. Create a new reservation.
-2. Retrieve all reservations from a certain user.
-3. Retrieve all reservations from a certain restaurant. 
+2. Retrieve all reservations made by a certain user.
+3. Retrieve all reservations made for a certain restaurant. 
 
 ## Developer Setup
 
