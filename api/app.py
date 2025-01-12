@@ -1,5 +1,4 @@
 import os
-
 import bcrypt
 import psycopg2
 from dotenv import load_dotenv
@@ -16,18 +15,18 @@ load_dotenv()
 app = Flask(__name__)
 cors = CORS(app)
 
-# Attach Prometheus metrics to the Flask app
 metrics = PrometheusMetrics(app)
-
-# Automatically collect standard metrics like request count, response duration, and more
 metrics.info('app_info', 'Restaurant Management API Info', version='1.0.0')
 
 def check_database_connection():
+    """
+    Checks if the database connection is active and operational.
+    Raises an exception if the database is not reachable.
+    """
     try:
-        # Connect to your PostgreSQL database
         connection = psycopg2.connect(os.getenv("DATABASE_URL"))
         cursor = connection.cursor()
-        cursor.execute('SELECT 1')  # Simple query to check if the database is responsive
+        cursor.execute('SELECT 1')  
         connection.close()
         print("Database is connected!")
     except OperationalError as err:
@@ -35,6 +34,12 @@ def check_database_connection():
 
 @app.route('/health')
 def health_check():
+    """
+    Health check endpoint to verify the service's status.
+    Returns:
+        - "Service is healthy" with a 200 status if the database connection is operational.
+        - "Service is unhealthy" with a 500 status if the connection check fails.
+    """
     try:
         check_database_connection()
         return "Service is healthy", 200
@@ -44,6 +49,12 @@ def health_check():
 @app.post("/make_reservation")
 @cross_origin()
 def make_reservation():
+    """
+    Creates a new reservation.
+    Receives reservation details in the request body and stores them in the database.
+    Returns:
+        - Success: JSON object with reservation ID and a success message (status 200).
+    """
     data = request.get_json()
     customer_id = data["customer_id"]
     restaurant_id = data["restaurant_id"]
@@ -81,6 +92,13 @@ def make_reservation():
 @app.get("/get_reservations_by_user")
 @cross_origin()
 def get_reservations_by_user():
+       """
+    Retrieves all reservations made by a specific user.
+    Accepts the user ID as a query parameter and fetches the corresponding reservations from the database.
+    Returns:
+        - Success: JSON object with a list of reservations (status 200).
+        - Failure: JSON object with an error message if no reservations are found.
+    """
     customer_id = request.args.get("customer_id")
 
     connection = psycopg2.connect(os.getenv("DATABASE_URL"))
@@ -110,6 +128,13 @@ def get_reservations_by_user():
 @app.get("/get_reservations_by_restaurant")
 @cross_origin()
 def get_reservations_by_restaurant():
+    """
+    Retrieves all reservations for a specific restaurant.
+    Accepts the restaurant ID as a query parameter and fetches the corresponding reservations from the database.
+    Returns:
+        - Success: JSON object with a list of reservations (status 200).
+        - Failure: JSON object with an error message if no reservations are found.
+    """
     restaurant_id = request.args.get("restaurant_id")
 
     connection = psycopg2.connect(os.getenv("DATABASE_URL"))
